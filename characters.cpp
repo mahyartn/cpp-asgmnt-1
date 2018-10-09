@@ -1,16 +1,5 @@
 #include "characters.h"
-//#include "pathfinder.h"
 #include <time.h>
-
-/*child::child()
-{
-    IsHandFull = false;
-    IsAtHome = false;
-    wait = 0;
-    IsScared = false;
-    IsFreez = false; 
-}
-*/
 
 child::child(int initial_stamina,cordinate home_position,cordinate destination_position,char name_character)
 {
@@ -49,10 +38,8 @@ void child::makeMove (std::vector <std::string> &map,std::vector <std::string> &
 {
     if ( current_position==home)
     {
-        //wait = 0;
         IsScared = false;
         current_stamina = starting_stamina;
-        //IsFreez = false;
         if (IsHandFull)
         {
             IsAtHome = true;
@@ -72,9 +59,6 @@ void child::makeMove (std::vector <std::string> &map,std::vector <std::string> &
         freez_time--;
         if (freez_time==0)
         {
-            // std::cout<<"unfreez"<<character_name<<'\n';
-            // std::cin.get();
-
            if (current_stamina == 0)
             {
                 current_stamina = starting_stamina;
@@ -82,27 +66,18 @@ void child::makeMove (std::vector <std::string> &map,std::vector <std::string> &
         }
         return;
     }
-    //std::cout<<"iterator:"<<iterator<<'\n';
-    //std::cin.get();
-    
-    //std::cin.get();
-    
     if (IsScared)
     {
-        //std::cin.get();
         iterator+=2;
-       // std::cout<<"----\n";
     }
     else
     {
         if (IsHandFull)
         {
             iterator++;
-           // std::cout<<"--\n";
         }
         else
         {
-            //std::cout<<"++\n";
            iterator--;
         }
     }
@@ -113,14 +88,10 @@ void child::makeMove (std::vector <std::string> &map,std::vector <std::string> &
         }
     if (iterator<0)
         {
-            iterator=0;
-            
+            iterator=0;  
         }
-    
-    std::cout<<character_name<<":it:"<<iterator<<'\n';
-    
+    std::cout<<character_name<<":it:"<<iterator<<'\n'; 
     current_position=route[iterator]; 
-
     current_stamina--;
     
 }

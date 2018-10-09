@@ -7,22 +7,8 @@
 #include <vector>
 #include <time.h>
 #include <unistd.h>
-//#include "basic.h"
 #include "characters.h"
-//#include "pathfinder.h"
 
-// class child
-// {
-//   public:
-//     child();
-//     int stamina;
-//     int wait;
-//     bool IsFreez;
-//     bool IsScared;
-//     bool IsHandFull;
-//     bool IsAtHome;
-//     cordinate position;
-// };
 class game
 {
   private:
@@ -32,10 +18,8 @@ class game
     std::vector<cordinate> routes[7];
     std::vector<cordinate> ghostList;
     int ghostNum = 0;
-    //child nokhodies[7];
     std::vector<ghost*> ghosts;
     cordinate home_position;
-    //void check
 
   public:
     

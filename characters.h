@@ -12,7 +12,6 @@ class child
     
     int iterator=0;
   public:
-    //child();
     char character_name;
     child(int initial_stamina,cordinate home_position,cordinate destination_position,char name_character);
     void makeMove(std::vector <std::string>& map,std::vector <std::string>& map2);

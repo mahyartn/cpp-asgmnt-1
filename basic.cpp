@@ -5,9 +5,9 @@
 #include <string>
 
  
-int number_of_children = 7;
-int map_lenght =29;
-int map_height =11;
+int g_number_of_children = 7;
+int g_map_lenght =29;
+int g_map_height =11;
 
 cordinate neighourPosition(cordinate home,int neighbourNumber)
 {
@@ -34,7 +34,7 @@ void gameSetting::loadConfig()
        
         getline(configFile, line);
         initial_time= (atoi(line.c_str()));
-        for (int i=0;i<number_of_children;i++)
+        for (int i=0;i<g_number_of_children;i++)
         {
             getline(configFile, line);
             children_stamina.push_back(atoi(line.c_str()));
@@ -69,9 +69,9 @@ void gameSetting::loadMap()
 
 void printMap(std::vector <std::string> map)
 {
-    for (int y = 0; y < map_height; y++)
+    for (int y = 0; y < g_map_height; y++)
     {
-        for (int x = 0; x < map_lenght; x++)
+        for (int x = 0; x < g_map_lenght; x++)
         {
             std::cout << map[y][x];
         }

@@ -6,9 +6,9 @@
 #include <vector>
 
 
-extern int number_of_children;
-extern int map_lenght;
-extern int map_height;
+extern int g_number_of_children;
+extern int g_map_lenght;
+extern int g_map_height;
 
 class cordinate {
     public:
@@ -29,9 +29,7 @@ public:
 };
 
 cordinate neighourPosition(cordinate home,int neighbourNumber);
-
 void printMap(std::vector <std::string> map);
-
 bool findRoute(std::vector <std::string> map,std::vector<cordinate> &cordinates_queue,std::vector<int>  &cordinates_parents_adress,cordinate home,cordinate destination);
 
 

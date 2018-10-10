@@ -19,52 +19,68 @@ int Game::getGameTime()
 {
     return config[0];
 }
+
+void Game::CheckForPrizes(int x,int y)
+{
+    for(int i=1;i <= g_number_of_children;i++)
+    {
+        if (static_map[y][x] == i + '0')
+        {
+            cordinate tmp;
+            tmp.y=y;
+            tmp.x=x;
+            destination_list.push_back(tmp);
+        }
+    } 
+}
+
+void Game::CheckForGhosts(int x,int y)
+{
+    if (static_map[y][x] == 'G')
+    {
+        cordinate tmp;
+        tmp.x = x;
+        tmp.y = y;
+        Ghost* g= new Ghost(tmp);
+        ghosts.push_back(g);
+        static_map[y][x] = '.';
+    }
+}
+
+void Game::CheckForHome(int x,int y)
+{
+    if (static_map[y][x] == 'H')
+        {
+            setHomePosition(y,x);
+        }  
+}
+
 void Game::extractObjects()
 {
     cordinate tmp;
-    for (int y = 1; y < map_height-1; y++)
+    for (int y = 1; y < g_map_height-1; y++)
     {
-        for (int x = 1; x < map_lenght -1; x++)
+        for (int x = 1; x < g_map_lenght -1; x++)
         {
-            if (static_map[y][x] == 'G')
-            {
-                tmp.x = x;
-                tmp.y = y;
-                ghost* g= new ghost(tmp);
-                ghosts.push_back(g);
-                static_map[y][x] = '.';
-            }
-            else if (static_map[y][x] == 'H')
-            {
-                setHomePosition(y,x);
-            }
-            else 
-            for(int i=1;i <= number_of_children;i++)
-            {
-                if (static_map[y][x] == i + '0')
-                {
-                    cordinate tmp;
-                    tmp.y=y;
-                    tmp.x=x;
-                    destination_list.push_back(tmp);
-                }
-            }             
+            CheckForGhosts(x,y);
+            CheckForHome(x,y);
+            CheckForPrizes(x,y);             
         }
     }
 }
 
 void Game::printmap()
 {
-    for (int y = 0; y < map_height; y++)
+    for (int y = 0; y < g_map_height; y++)
     {
-        for (int x = 0; x < map_lenght; x++)
+        for (int x = 0; x < g_map_lenght; x++)
         {
             std::cout << game_dynamic_map[y][x];
         }
         std::cout << '\n';
     }
 }
-void Game::updateTurn()
+void Game::UpdateCharacters()
 {
     game_dynamic_map = static_map; 
     for (int j=0;j< children.size();j++)
@@ -84,7 +100,7 @@ int Game::remainingObjectives()
     int h = 0;
     for (int i = 0; i < children.size(); i++)
     {
-        if (children[i]->IsAtHome)
+        if (children[i]->done)
         {
             h++;
         }
@@ -92,41 +108,60 @@ int Game::remainingObjectives()
     return 7 - h;
 }
 
-void Game::checkState()
+void Game::CheckStamina(int i)
 {
-    for (int i = 0; i < children.size(); i++)
-    {
-        if (children[i]->current_stamina <= 0)
+    if (children[i]->current_stamina <= 0)
         {
             children[i]->freez_time=config[1];
             children[i]->current_stamina=children[i]->starting_stamina;
         }
-        if (static_map[children[i]->current_position.y][children[i]->current_position.x] == 'E')
-        {
-            children[i]->current_stamina += 5;
-            static_map[children[i]->current_position.y][children[i]->current_position.x] = '.';
-        }
-        if (game_dynamic_map[children[i]->current_position.y][children[i]->current_position.x] == 'G')
-        {
-           
-            children[i]->IsScared= true;
-            children[i]->freez_time=5;
-        }
-        if (game_dynamic_map[(children[i]->current_position.y) - 1][children[i]->current_position.x] == 'G' 
-        || game_dynamic_map[(children[i]->current_position.y) + 1][children[i]->current_position.x] == 'G' 
-        || game_dynamic_map[children[i]->current_position.y][(children[i]->current_position.x) - 1] == 'G' 
-        || game_dynamic_map[children[i]->current_position.y][(children[i]->current_position.x) + 1] == 'G')
+       
+}
+
+void Game::CheckEidies(int i)
+{
+    if (static_map[children[i]->current_position.y][children[i]->current_position.x] == 'E')
+    {
+        children[i]->current_stamina += 5;
+        static_map[children[i]->current_position.y][children[i]->current_position.x] = '.';
+    }
+}
+
+void Game::LookForGhosts(int i)
+{
+    if (game_dynamic_map[children[i]->current_position.y][children[i]->current_position.x] == 'G')
+    {
+        children[i]->IsScared= true;
+        children[i]->freez_time=5;
+        return;
+    }
+    for (int j=0;j<4;j++)
+    {
+        cordinate tmp=neighourPosition(children[i]->current_position,j);
+        if (game_dynamic_map[tmp.y][tmp.x] == 'G')
         {
             children[i]->IsScared = true;
+            return;
         }
     }
 }
 
-void Game::createChildren(std::vector<std::string>map,std::vector<child*> &children,std::vector <cordinate> destination_list,std::vector<int> children_stamina,cordinate home_position)
+
+void Game::checkState()
+{
+    for (int i = 0; i < children.size(); i++)
+    {
+        CheckStamina(i);
+        CheckEidies(i);
+        LookForGhosts(i);   
+    }
+}
+
+void Game::createChildren(std::vector<std::string>map,std::vector<Child*> &children,std::vector <cordinate> destination_list,std::vector<int> children_stamina,cordinate home_position)
 {
     for (int k=0;k<destination_list.size();k++)
     {
-        child* c= new child(children_stamina[k],home_position,destination_list[k],k+'T');
+        Child* c= new Child(children_stamina[k],home_position,destination_list[k],k+'T');
         std::vector <cordinate> tmp_route;
         std::vector <int> tmp_address;
         findRoute(map,tmp_route,tmp_address,home_position,destination_list[k]);

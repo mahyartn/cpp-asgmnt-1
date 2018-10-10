@@ -3,35 +3,35 @@
 #include "characters.h"
 #include "basic.h"
 #include <vector>
-#include "pathfinder.h"
-class child
+class Child
 {
     std::vector <cordinate> route;
     cordinate home;
     cordinate destination;
-    
     int iterator=0;
+    bool CheckIfFrozen();
+    void CheckIfHome();
+    void IteratorLimiter();
+    void UpdateIterator();
   public:
     char character_name;
-    child(int initial_stamina,cordinate home_position,cordinate destination_position,char name_character);
+    Child(int initial_stamina,cordinate home_position,cordinate destination_position,char name_character);
     void makeMove(std::vector <std::string>& map,std::vector <std::string>& map2);
     void setRoute(std::vector <cordinate> given_route,std::vector <int> address_list);
     void showRoute();
     int starting_stamina;
     int current_stamina;
-    int wait;
     int freez_time=0;
-    bool IsFreez;
     bool IsScared=false;
     bool IsHandFull=false;
-    bool IsAtHome;
+    bool done;
     cordinate current_position;
 };
 
-class ghost
+class Ghost
 {
   public:
-    ghost(cordinate start_position);
+    Ghost(cordinate start_position);
     cordinate current_position;
     void makeMove(std::vector <std::string> &map);
 };

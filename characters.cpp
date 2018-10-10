@@ -90,7 +90,6 @@ void child::makeMove (std::vector <std::string> &map,std::vector <std::string> &
         {
             iterator=0;  
         }
-    std::cout<<character_name<<":it:"<<iterator<<'\n'; 
     current_position=route[iterator]; 
     current_stamina--;
     

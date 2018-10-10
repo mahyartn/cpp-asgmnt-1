@@ -30,6 +30,9 @@ public:
 
 cordinate neighourPosition(cordinate home,int neighbourNumber);
 
+void printMap(std::vector <std::string> map);
+
+bool findRoute(std::vector <std::string> map,std::vector<cordinate> &cordinates_queue,std::vector<int>  &cordinates_parents_adress,cordinate home,cordinate destination);
 
 
 #endif

@@ -9,7 +9,7 @@
 #include <unistd.h>
 #include "characters.h"
 
-class game
+class Game
 {
   private:
     std::vector<int> config;
@@ -23,7 +23,7 @@ class game
 
   public:
     
-    game(std::vector<std::string> &map,int initial_time,std::vector<int> children_stamina,int eidi_bonus);
+    Game(std::vector<std::string> &map,int initial_time,std::vector<int> children_stamina,int eidi_bonus);
     std::vector <cordinate> destination_list;
     std::vector<child*> children;
     cordinate getHomePosition();
@@ -36,7 +36,9 @@ class game
     void setHomePosition(int y,int x); 
     int getGameTime();
     int getChildInitialStamina(int num);
-    int remainingObjectives();    
+    int remainingObjectives();
+    void createChildren(std::vector<std::string>map,std::vector<child*> &children,std::vector <cordinate> destination_list,std::vector<int> children_stamina,cordinate home_position);
+
 };
 
 #endif

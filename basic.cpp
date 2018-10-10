@@ -67,4 +67,47 @@ void gameSetting::loadMap()
         std::cout << "Unable to open map file";
 }
 
+void printMap(std::vector <std::string> map)
+{
+    for (int y = 0; y < map_height; y++)
+    {
+        for (int x = 0; x < map_lenght; x++)
+        {
+            std::cout << map[y][x];
+        }
+        std::cout << '\n';
+    }
+}
 
+bool findRoute(std::vector <std::string> map,std::vector<cordinate> &cordinates_queue,std::vector<int>  &cordinates_parents_adress,cordinate home,cordinate destination)
+{
+    cordinate tmp;
+    int counter=0;
+    map[home.y][home.x] = 'O';
+    cordinates_queue.push_back(home);
+    cordinates_parents_adress.push_back(0);
+    cordinate new_position;
+    char m;
+    while (true)
+    {
+        tmp.x = cordinates_queue[counter].x;
+        tmp.y = cordinates_queue[counter].y;
+        counter++;
+        for (int j=0;j<4;j++)
+        {
+            new_position=neighourPosition(tmp,j);
+            m=map[new_position.y][new_position.x];
+            if ( m != '#' && m != 'O') 
+            {
+                cordinates_queue.push_back(new_position);
+                cordinates_parents_adress.push_back(counter);
+                map[new_position.y][new_position.x] = 'O';
+            }
+            if (new_position==destination) 
+            {
+                std::cout<< "found!\n";
+                return true;
+            }
+        }
+    }
+}

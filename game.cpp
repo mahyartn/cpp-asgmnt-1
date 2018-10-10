@@ -1,25 +1,25 @@
 #include "game.h"
 
-game::game(std::vector<std::string> &map,int initial_time,std::vector<int> children_stamina,int eidi_bonus)
+Game::Game(std::vector<std::string> &map,int initial_time,std::vector<int> children_stamina,int eidi_bonus)
 {
     static_map=map;
     config.push_back(initial_time);
     config.push_back(eidi_bonus);
 }
-void game::setHomePosition(int y, int x)
+void Game::setHomePosition(int y, int x)
 {
     home_position.x=x;
     home_position.y=y;
 }
-cordinate game::getHomePosition()
+cordinate Game::getHomePosition()
 {   
     return home_position;
 }
-int game::getGameTime()
+int Game::getGameTime()
 {
     return config[0];
 }
-void game::extractObjects()
+void Game::extractObjects()
 {
     cordinate tmp;
     for (int y = 1; y < map_height-1; y++)
@@ -53,7 +53,7 @@ void game::extractObjects()
     }
 }
 
-void game::printmap()
+void Game::printmap()
 {
     for (int y = 0; y < map_height; y++)
     {
@@ -64,13 +64,12 @@ void game::printmap()
         std::cout << '\n';
     }
 }
-void game::updateTurn()
+void Game::updateTurn()
 {
     game_dynamic_map = static_map; 
     for (int j=0;j< children.size();j++)
     { 
         children[j]->makeMove(game_dynamic_map,static_map);
-        std::cout<<children[j]->character_name<<":"<<children[j]->current_position.y<<" : "<<children[j]->current_position.x<<"\n";
         game_dynamic_map[children[j]->current_position.y][children[j]->current_position.x] =children[j]->character_name;
     }
     for (int i=0;i< ghosts.size();i++)
@@ -80,7 +79,7 @@ void game::updateTurn()
     }
 }
 
-int game::remainingObjectives()
+int Game::remainingObjectives()
 {
     int h = 0;
     for (int i = 0; i < children.size(); i++)
@@ -93,11 +92,10 @@ int game::remainingObjectives()
     return 7 - h;
 }
 
-void game::checkState()
+void Game::checkState()
 {
     for (int i = 0; i < children.size(); i++)
     {
-        std::cout<<children[i]->character_name<<":"<<"1\n";
         if (children[i]->current_stamina <= 0)
         {
             children[i]->freez_time=config[1];
@@ -121,5 +119,18 @@ void game::checkState()
         {
             children[i]->IsScared = true;
         }
+    }
+}
+
+void Game::createChildren(std::vector<std::string>map,std::vector<child*> &children,std::vector <cordinate> destination_list,std::vector<int> children_stamina,cordinate home_position)
+{
+    for (int k=0;k<destination_list.size();k++)
+    {
+        child* c= new child(children_stamina[k],home_position,destination_list[k],k+'T');
+        std::vector <cordinate> tmp_route;
+        std::vector <int> tmp_address;
+        findRoute(map,tmp_route,tmp_address,home_position,destination_list[k]);
+        c->setRoute(tmp_route,tmp_address);
+        children.push_back(c);
     }
 }

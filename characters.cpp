@@ -3,13 +3,14 @@
 Child::Child(int initial_stamina,cordinate home_position,std::vector <cordinate> given_route,char name_character)
 {
     character_name=name_character;
-    IsHandFull = false;
-    done = false;
-    IsScared = false;
+    is_handFull = false;
+    is_done = false;
+    is_scared = false;
     starting_stamina = initial_stamina;
     current_stamina = initial_stamina;
     home=home_position;
-    //destination=destination_position;
+    route=given_route;
+    iterator=given_route.size();
     current_position=home_position;   
 }
 
@@ -19,11 +20,11 @@ void Child::CheckIfHome()
 {
     if ( current_position==home)
     {
-        IsScared = false;
+        is_scared = false;
         current_stamina = starting_stamina;
-        if (IsHandFull)
+        if (is_handFull)
         {
-            done = true;
+            is_done = true;
         }
     }
 }
@@ -60,13 +61,13 @@ void Child::IteratorLimiter()
 
 void Child::UpdateIterator()
 {
-    if (IsScared)
+    if (is_scared)
     {
         iterator+=2;
     }
     else
     {
-        if (IsHandFull)
+        if (is_handFull)
         {
             iterator++;
         }
@@ -78,10 +79,10 @@ void Child::UpdateIterator()
 }
 
 
-void Child::makeMove ()
+void Child::MakeMove ()
 {
     CheckIfHome();
-    if (done) return;
+    if (is_done) return;
     if (CheckIfFrozen()) return;
     UpdateIterator();
     IteratorLimiter(); 
@@ -89,7 +90,7 @@ void Child::makeMove ()
     current_stamina--;
 }
 
-void Child::showRoute()
+void Child::ShowRoute()
 {
     std::cout << character_name << "\n" ;
     for (int i=0;i< route.size();i++)
@@ -103,45 +104,47 @@ void Child::CheckStamina()
 {
     if (current_stamina <= 0)
         {
-            freez_time=g_freez_time;
+            freez_time=FREEZ_TIME;
             current_stamina=starting_stamina;
         }
        
 }
 
-void Child::CheckEidies(Map *map)
+void Child::CheckEidies(Mapper *map)
 {
-    if (map->GetDynamicChar(current_position.x,current_position.y) == 'E')
+    if (map->GetStaticChar(current_position.x,current_position.y) == 'E')
     {
         current_stamina += 5;
         map->SetStaticChar(current_position.x,current_position.y,'.');
+        map->SetDynamicChar(current_position.x,current_position.y,'.');
+        
     }
 }
 
-void Child::CheckCyns(Map *map)
+void Child::CheckCyns(Mapper *map)
 {
-    if (current_position==route[route.size()])
+    if (current_position==route[0])
     {
-        IsHandFull=true;
+        is_handFull=true;
         map->SetStaticChar(current_position.x,current_position.y,'.');
     }
 }
 
 
-void Child::LookForGhosts(Map *map)
+void Child::LookForGhosts(Mapper *map)
 {
     if (map->GetDynamicChar(current_position.x,current_position.y) == 'G')
     {
-        IsScared= true;
+        is_scared= true;
         freez_time=5;
         return;
     }
     for (int j=0;j<4;j++)
     {
-        cordinate tmp=neighourPosition(current_position,j);
+        cordinate tmp=NeighourPosition(current_position,j);
         if (map->GetDynamicChar(tmp.x,tmp.y) == 'G')
         {
-            IsScared = true;
+            is_scared = true;
             return;
         }
     }
@@ -152,7 +155,7 @@ Ghost::Ghost(cordinate starting_postion)
     current_position=starting_postion;
 }
 
-void Ghost::makeMove()
+void Ghost::MakeMove()
 {
     int y_sequence[]={-1,0,1,0};
     int x_sequence[]={0,-1,0,1};
@@ -163,7 +166,7 @@ void Ghost::makeMove()
     {
         current_position.x+=1;
     }
-    else if (current_position.x == g_map_lenght-2 && move_x == 1)
+    else if (current_position.x == MAP_LENGHT-2 && move_x == 1)
     {
         current_position.x-=1;        
     }
@@ -175,7 +178,7 @@ void Ghost::makeMove()
     {
         current_position.y+=1;
     }
-    else if (current_position.y == g_map_height-2 && move_y == 1)
+    else if (current_position.y == MAP_HEIGHT-2 && move_y == 1)
     {
         current_position.y-=1;        
     }

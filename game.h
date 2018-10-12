@@ -1,13 +1,10 @@
 #ifndef GAME_H
 #define GAME_H
 
-
-#include <string>
-#include <vector>
 #include <time.h>
 #include <unistd.h>
 #include "characters.h"
-#include "map.h"
+//
 
 
 class Game
@@ -18,13 +15,13 @@ class Game
     std::vector<Child*> children;
     
   public:
-    Map* map;
+    Mapper* map;
     Game(std::vector<std::string> &given_map,int initial_time,std::vector<int> children_stamina,int eidi_bonus);
-    void createChildren(std::vector <cordinate> routes[],std::vector<int> children_stamina,cordinate home_position);
+    void CreateChildren(std::vector <cordinate> routes[],std::vector<int> children_stamina,cordinate home_position);
     void UpdateCharacters();
-    void checkState();
-    int getGameTime();
-    int remainingObjectives();
+    void CheckState();
+    int GetGameTime();
+    int RemainingObjectives();
     
     
 };

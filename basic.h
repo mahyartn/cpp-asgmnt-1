@@ -1,14 +1,16 @@
 #ifndef BASIC_H
 #define BASIC_H
+#include <stdlib.h>
 #include <fstream>
 #include <iostream>
 #include <string>
 #include <vector>
+#include <time.h>
 
-#define g_number_of_children 7
-#define g_map_lenght 29
-#define g_map_height 11
-#define g_freez_time 5
+#define NUMBER_OF_CHILDREN 7
+#define MAP_LENGHT 29
+#define MAP_HEIGHT 11
+#define FREEZ_TIME 5
 
 class cordinate {
     public:
@@ -24,14 +26,39 @@ public:
     int eidi_bonus;
     std::vector<int> children_stamina;
     std::vector<std::string> static_map;
-    void loadMap();
-    void loadConfig();
+    void LoadMap();
+    void LoadConfig();
+};
+
+class Mapper
+{
+  private:
+  std::vector <std::string> static_map;
+  std::vector <std::string> game_dynamic_map;
+  std::vector <cordinate> destination_list;
+  cordinate home_position;
+  void CheckForPrizes(int x,int y);
+  void CheckForGhosts(int x,int y);
+  void CheckForHome(int x,int y);
+  void ExtractObjects();
+  std::vector <cordinate> findRoute(cordinate home,cordinate destination);
+
+  public:
+  Mapper(std::vector<std::string> &map);
+  std::vector <cordinate> routes[NUMBER_OF_CHILDREN];
+  std::vector <cordinate> ghost_list;
+  void PrintMap();
+  void SetStaticChar(int x,int y,char character);
+  void SetDynamicChar(int x,int y,char character);;
+  char GetDynamicChar(int x,int y);
+  char GetStaticChar(int x,int y);
+  void RefreshDynamicMap();
+  cordinate GetHomePosition();
+
 };
 
 
-cordinate neighourPosition(cordinate home,int neighbourNumber);
-void printMap(std::vector <std::string> map);
-bool findRoute(std::vector <std::string> map,std::vector<cordinate> &cordinates_queue,std::vector<int>  &cordinates_parents_adress,cordinate home,cordinate destination);
+cordinate NeighourPosition(cordinate home,int neighbourNumber);
 
 
 #endif

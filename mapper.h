@@ -1,9 +1,9 @@
-#ifndef MAP_H
-#define MAP_H
+#ifndef MAPPER_H
+#define MAPPER_H
 
-#include "characters.h"
+#include "basic.h"
 
-class Map
+class Mapper
 {
   private:
   std::vector <std::string> static_map;
@@ -17,16 +17,18 @@ class Map
   std::vector <cordinate> findRoute(cordinate home,cordinate destination);
 
   public:
-  Map(std::vector<std::string> map);
-  std::vector <cordinate> routes[g_number_of_children];
+  Mapper(std::vector<std::string> &map);
+  std::vector <cordinate> routes[NUMBER_OF_CHILDREN];
   std::vector <cordinate> ghost_list;
   void PrintMap();
   void SetStaticChar(int x,int y,char character);
   void SetDynamicChar(int x,int y,char character);;
   char GetDynamicChar(int x,int y);
+  char GetStaticChar(int x,int y);
   void RefreshDynamicMap();
-  cordinate getHomePosition();
+  cordinate GetHomePosition();
 
 };
+
 
 #endif

@@ -2,38 +2,46 @@
 #define CHARACTERS_H
 #include "characters.h"
 #include "basic.h"
+#include "map.h"
 #include <vector>
+#include <time.h>
 class Child
 {
-    std::vector <cordinate> route;
-    cordinate home;
-    cordinate destination;
-    int iterator=0;
-    bool CheckIfFrozen();
-    void CheckIfHome();
-    void IteratorLimiter();
-    void UpdateIterator();
+  private:
+  void showRoute();
+  void CheckIfHome();
+  bool CheckIfFrozen();
+  void UpdateIterator();
+  void IteratorLimiter();
+  std::vector <cordinate> route;
+  cordinate home;
+  cordinate destination;
+  int starting_stamina=0;
+  int current_stamina=0;
+  int freez_time=0;
+  int iterator=0;
+  bool IsScared=false;
+  bool IsHandFull=false;
+
   public:
-    char character_name;
-    Child(int initial_stamina,cordinate home_position,cordinate destination_position,char name_character);
-    void makeMove(std::vector <std::string>& map,std::vector <std::string>& map2);
-    void setRoute(std::vector <cordinate> given_route,std::vector <int> address_list);
-    void showRoute();
-    int starting_stamina;
-    int current_stamina;
-    int freez_time=0;
-    bool IsScared=false;
-    bool IsHandFull=false;
-    bool done;
-    cordinate current_position;
+  Child(int initial_stamina,cordinate home_position,std::vector <cordinate> given_route,char name_character);
+  void makeMove();
+  void setRoute(std::vector <cordinate> given_route,std::vector <int> address_list);
+  void CheckStamina();
+  void CheckEidies(Map *map);
+  void LookForGhosts(Map *map);
+  void CheckCyns(Map *map);
+  char character_name;
+  bool done;
+  cordinate current_position;
 };
 
 class Ghost
 {
   public:
-    Ghost(cordinate start_position);
-    cordinate current_position;
-    void makeMove(std::vector <std::string> &map);
+  Ghost(cordinate start_position);
+  cordinate current_position;
+  void makeMove();
 };
 
 #endif

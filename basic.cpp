@@ -5,9 +5,6 @@
 #include <string>
 
  
-int g_number_of_children = 7;
-int g_map_lenght =29;
-int g_map_height =11;
 
 cordinate neighourPosition(cordinate home,int neighbourNumber)
 {

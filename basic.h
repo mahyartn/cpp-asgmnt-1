@@ -5,10 +5,10 @@
 #include <string>
 #include <vector>
 
-
-extern int g_number_of_children;
-extern int g_map_lenght;
-extern int g_map_height;
+#define g_number_of_children 7
+#define g_map_lenght 29
+#define g_map_height 11
+#define g_freez_time 5
 
 class cordinate {
     public:
@@ -27,6 +27,7 @@ public:
     void loadMap();
     void loadConfig();
 };
+
 
 cordinate neighourPosition(cordinate home,int neighbourNumber);
 void printMap(std::vector <std::string> map);

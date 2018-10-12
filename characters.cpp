@@ -1,7 +1,6 @@
 #include "characters.h"
-#include <time.h>
 
-Child::Child(int initial_stamina,cordinate home_position,cordinate destination_position,char name_character)
+Child::Child(int initial_stamina,cordinate home_position,std::vector <cordinate> given_route,char name_character)
 {
     character_name=name_character;
     IsHandFull = false;
@@ -10,26 +9,11 @@ Child::Child(int initial_stamina,cordinate home_position,cordinate destination_p
     starting_stamina = initial_stamina;
     current_stamina = initial_stamina;
     home=home_position;
-    destination=destination_position;
+    //destination=destination_position;
     current_position=home_position;   
 }
 
-void Child::setRoute(std::vector <cordinate> given_route,std::vector <int> address_list)
-{
-    int i = given_route.size();
-    while(true)
-    {
-        route.push_back(given_route[i-1]);
-        
-        if (given_route[i-1]==home)
-        {
-            break; 
-        }
-        
-        i=address_list[i-1]; 
-    }
-    iterator= route.size();
-}
+
 
 void Child::CheckIfHome()
 {
@@ -94,7 +78,7 @@ void Child::UpdateIterator()
 }
 
 
-void Child::makeMove (std::vector <std::string> &map,std::vector <std::string> &map2)
+void Child::makeMove ()
 {
     CheckIfHome();
     if (done) return;
@@ -115,12 +99,60 @@ void Child::showRoute()
     std::cin.get();
 }
 
+void Child::CheckStamina()
+{
+    if (current_stamina <= 0)
+        {
+            freez_time=g_freez_time;
+            current_stamina=starting_stamina;
+        }
+       
+}
+
+void Child::CheckEidies(Map *map)
+{
+    if (map->GetDynamicChar(current_position.x,current_position.y) == 'E')
+    {
+        current_stamina += 5;
+        map->SetStaticChar(current_position.x,current_position.y,'.');
+    }
+}
+
+void Child::CheckCyns(Map *map)
+{
+    if (current_position==route[route.size()])
+    {
+        IsHandFull=true;
+        map->SetStaticChar(current_position.x,current_position.y,'.');
+    }
+}
+
+
+void Child::LookForGhosts(Map *map)
+{
+    if (map->GetDynamicChar(current_position.x,current_position.y) == 'G')
+    {
+        IsScared= true;
+        freez_time=5;
+        return;
+    }
+    for (int j=0;j<4;j++)
+    {
+        cordinate tmp=neighourPosition(current_position,j);
+        if (map->GetDynamicChar(tmp.x,tmp.y) == 'G')
+        {
+            IsScared = true;
+            return;
+        }
+    }
+}
+
 Ghost::Ghost(cordinate starting_postion)
 {
     current_position=starting_postion;
 }
 
-void Ghost::makeMove(std::vector <std::string> &map)
+void Ghost::makeMove()
 {
     int y_sequence[]={-1,0,1,0};
     int x_sequence[]={0,-1,0,1};

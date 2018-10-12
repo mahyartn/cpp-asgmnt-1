@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <unistd.h>
-//using namespace std;
+
 struct cordinate
 {
     int x;
@@ -49,10 +49,7 @@ void gameSetting::loadFiles()
         int cntr = 0;
         while (getline(configFile, line))
         {
-            //std::cout << line << '\n';
             config.push_back(atoi(line.c_str()));
-            // config[cntr] = atoi(line.c_str());
-            //cntr++;
         }
         configFile.close();
     }
@@ -65,9 +62,7 @@ void gameSetting::loadFiles()
         static_map.push_back("#############################################################");
         while (getline(mapFile, line))
         {
-            //std::cout << line.c_str() << '\n';
             std::string tmp = "#" + std::string(line.c_str()) + "#";
-            //std::cout <<tmp<<"\n";
             static_map.push_back(tmp);
         }
         static_map.push_back("##############################################################");

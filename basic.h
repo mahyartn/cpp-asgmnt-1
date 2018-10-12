@@ -1,14 +1,16 @@
 #ifndef BASIC_H
 #define BASIC_H
+#include <stdlib.h>
 #include <fstream>
 #include <iostream>
 #include <string>
 #include <vector>
+#include <time.h>
 
-
-extern int number_of_children;
-extern int map_lenght;
-extern int map_height;
+#define NUMBER_OF_CHILDREN 7
+#define MAP_LENGHT 29
+#define MAP_HEIGHT 11
+#define FREEZ_TIME 5
 
 class cordinate {
     public:
@@ -24,12 +26,13 @@ public:
     int eidi_bonus;
     std::vector<int> children_stamina;
     std::vector<std::string> static_map;
-    void loadMap();
-    void loadConfig();
+    void LoadMap();
+    void LoadConfig();
 };
 
-cordinate neighourPosition(cordinate home,int neighbourNumber);
 
+
+cordinate NeighourPosition(cordinate home,int neighbourNumber);
 
 
 #endif

@@ -1,131 +1,96 @@
 #include "characters.h"
-//#include "pathfinder.h"
-#include <time.h>
 
-/*child::child()
-{
-    IsHandFull = false;
-    IsAtHome = false;
-    wait = 0;
-    IsScared = false;
-    IsFreez = false; 
-}
-*/
-
-child::child(int initial_stamina,cordinate home_position,cordinate destination_position,char name_character)
+Child::Child(int initial_stamina,cordinate home_position,std::vector <cordinate> given_route,char name_character)
 {
     character_name=name_character;
-    IsHandFull = false;
-    IsAtHome = false;
-    wait = 0;
-    IsScared = false;
-    IsFreez = false;
+    is_handFull = false;
+    is_done = false;
+    is_scared = false;
     starting_stamina = initial_stamina;
     current_stamina = initial_stamina;
     home=home_position;
-    destination=destination_position;
-    current_position=home_position;
-    
+    route=given_route;
+    iterator=given_route.size();
+    current_position=home_position;   
 }
 
-void child::setRoute(std::vector <cordinate> given_route,std::vector <int> address_list)
-{
-    int i = given_route.size();
-    while(true)
-    {
-        route.push_back(given_route[i-1]);
-        
-        if (given_route[i-1]==home)
-        {
-            break; 
-        }
-        
-        i=address_list[i-1]; 
-    }
-    iterator= route.size();
-}
 
-void child::makeMove (std::vector <std::string> &map,std::vector <std::string> &map2)
+
+void Child::CheckIfHome()
 {
     if ( current_position==home)
     {
-        //wait = 0;
-        IsScared = false;
+        is_scared = false;
         current_stamina = starting_stamina;
-        //IsFreez = false;
-        if (IsHandFull)
+        if (is_handFull)
         {
-            IsAtHome = true;
+            is_done = true;
         }
     }
-    if (current_position==destination)
-    {
-        map2[current_position.y][current_position.x] ='.';
-        IsHandFull=true;
-    }
-    if (IsAtHome)
-    {
-        return;
-    }
+}
+
+bool Child::CheckIfFrozen()
+{
     if (freez_time>0)
     {
         freez_time--;
         if (freez_time==0)
         {
-            // std::cout<<"unfreez"<<character_name<<'\n';
-            // std::cin.get();
-
            if (current_stamina == 0)
             {
                 current_stamina = starting_stamina;
             } 
         }
-        return;
+        return true;
     }
-    //std::cout<<"iterator:"<<iterator<<'\n';
-    //std::cin.get();
-    
-    //std::cin.get();
-    
-    if (IsScared)
-    {
-        //std::cin.get();
-        iterator+=2;
-       // std::cout<<"----\n";
-    }
-    else
-    {
-        if (IsHandFull)
-        {
-            iterator++;
-           // std::cout<<"--\n";
-        }
-        else
-        {
-            //std::cout<<"++\n";
-           iterator--;
-        }
-    }
+    return false;
+}
+
+
+void Child::IteratorLimiter()
+{
     if (iterator>=route.size())
         {
             iterator=route.size()-1;
-            IsScared=false;
         }
     if (iterator<0)
         {
-            iterator=0;
-            
+            iterator=0;  
         }
-    
-    std::cout<<character_name<<":it:"<<iterator<<'\n';
-    
-    current_position=route[iterator]; 
-
-    current_stamina--;
-    
 }
 
-void child::showRoute()
+void Child::UpdateIterator()
+{
+    if (is_scared)
+    {
+        iterator+=2;
+    }
+    else
+    {
+        if (is_handFull)
+        {
+            iterator++;
+        }
+        else
+        {
+           iterator--;
+        }
+    }
+}
+
+
+void Child::MakeMove ()
+{
+    CheckIfHome();
+    if (is_done) return;
+    if (CheckIfFrozen()) return;
+    UpdateIterator();
+    IteratorLimiter(); 
+    current_position=route[iterator]; 
+    current_stamina--;
+}
+
+void Child::ShowRoute()
 {
     std::cout << character_name << "\n" ;
     for (int i=0;i< route.size();i++)
@@ -135,11 +100,62 @@ void child::showRoute()
     std::cin.get();
 }
 
-ghost::ghost(cordinate starting_postion)
+void Child::CheckStamina()
+{
+    if (current_stamina <= 0)
+        {
+            freez_time=FREEZ_TIME;
+            current_stamina=starting_stamina;
+        }
+       
+}
+
+void Child::CheckEidies(Mapper *map)
+{
+    if (map->GetStaticChar(current_position.x,current_position.y) == 'E')
+    {
+        current_stamina += 5;
+        map->SetStaticChar(current_position.x,current_position.y,'.');
+        map->SetDynamicChar(current_position.x,current_position.y,'.');
+        
+    }
+}
+
+void Child::CheckCyns(Mapper *map)
+{
+    if (current_position==route[0])
+    {
+        is_handFull=true;
+        map->SetStaticChar(current_position.x,current_position.y,'.');
+    }
+}
+
+
+void Child::LookForGhosts(Mapper *map)
+{
+    if (map->GetDynamicChar(current_position.x,current_position.y) == 'G')
+    {
+        is_scared= true;
+        freez_time=5;
+        return;
+    }
+    for (int j=0;j<4;j++)
+    {
+        cordinate tmp=NeighourPosition(current_position,j);
+        if (map->GetDynamicChar(tmp.x,tmp.y) == 'G')
+        {
+            is_scared = true;
+            return;
+        }
+    }
+}
+
+Ghost::Ghost(cordinate starting_postion)
 {
     current_position=starting_postion;
 }
-void ghost::makeMove(std::vector <std::string> &map)
+
+void Ghost::MakeMove()
 {
     int y_sequence[]={-1,0,1,0};
     int x_sequence[]={0,-1,0,1};
@@ -150,7 +166,7 @@ void ghost::makeMove(std::vector <std::string> &map)
     {
         current_position.x+=1;
     }
-    else if (current_position.x == map_lenght-2 && move_x == 1)
+    else if (current_position.x == MAP_LENGHT-2 && move_x == 1)
     {
         current_position.x-=1;        
     }
@@ -162,7 +178,7 @@ void ghost::makeMove(std::vector <std::string> &map)
     {
         current_position.y+=1;
     }
-    else if (current_position.y == map_height-2 && move_y == 1)
+    else if (current_position.y == MAP_HEIGHT-2 && move_y == 1)
     {
         current_position.y-=1;        
     }

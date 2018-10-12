@@ -1,15 +1,8 @@
 #include "basic.h"
-#include <stdlib.h>
-#include <fstream>
-#include <iostream>
-#include <string>
+//#include "mapper.h"
 
- 
-int number_of_children = 7;
-int map_lenght =29;
-int map_height =11;
 
-cordinate neighourPosition(cordinate home,int neighbourNumber)
+cordinate NeighourPosition(cordinate home,int neighbourNumber)
 {
     int y_sequence[]={-1,0,1,0};
     int x_sequence[]={0,-1,0,1};
@@ -24,7 +17,7 @@ bool cordinate::operator==(cordinate subject) {
 	return (x == subject.x && y == subject.y);
 }
 
-void gameSetting::loadConfig()
+void gameSetting::LoadConfig()
 {
     std::string line;
     char *line2;
@@ -34,7 +27,7 @@ void gameSetting::loadConfig()
        
         getline(configFile, line);
         initial_time= (atoi(line.c_str()));
-        for (int i=0;i<number_of_children;i++)
+        for (int i=0;i<NUMBER_OF_CHILDREN;i++)
         {
             getline(configFile, line);
             children_stamina.push_back(atoi(line.c_str()));
@@ -47,7 +40,7 @@ void gameSetting::loadConfig()
         std::cout << "Unable to open config file";
 
 }
-void gameSetting::loadMap()
+void gameSetting::LoadMap()
 {
     std::string line;
     char *line2;
@@ -66,5 +59,4 @@ void gameSetting::loadMap()
     else
         std::cout << "Unable to open map file";
 }
-
 

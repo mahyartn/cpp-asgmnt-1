@@ -1,8 +1,8 @@
 #ifndef CHARACTERS_H
 #define CHARACTERS_H
 
-#include "basic.h"
-//#include "mapper.h"
+
+#include "mapper.h"
 
 class Child
 {
